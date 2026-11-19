@@ -1,0 +1,13 @@
+{
+  "title": "Обед в Рохат",
+  "items": [
+    {"name": "Плов", "price": 45000, "qty": 3},
+    {"name": "Лагман", "price": 38000}
+  ],
+  "shared": [
+    {"name": "Чай", "price": 12000},
+    {"name": "Хлеб", "price": 4000, "qty": 2}
+  ],
+  "service_percent": 15,
+  "total": 221950
+}

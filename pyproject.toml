@@ -1,0 +1,17 @@
+[project]
+name = "tushlik-bot"
+version = "0.1.0"
+description = "Telegram bot that splits a group lunch bill and tracks who paid back"
+requires-python = ">=3.12"
+license = "MIT"
+
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
