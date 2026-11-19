@@ -9,7 +9,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    mem_limit: 192m
+    mem_limit: 320m
     read_only: true
     tmpfs: [/tmp]
     security_opt: [no-new-privileges:true]
