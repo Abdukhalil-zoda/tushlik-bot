@@ -54,7 +54,7 @@ docker compose up -d --build
 docker compose logs -f bot
 ```
 
-Бот работает через long polling: открытые порты и домен не нужны. Postgres свой, в том же compose.
+Бот работает через long polling: открытые порты и домен не нужны. Postgres свой, в том же compose. Все настройки с пояснениями — в [.env.example](.env.example). ID группы указывать не нужно: бот работает в любой группе, куда его добавили, и запоминает её сам.
 
 Разработка:
 
