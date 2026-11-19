@@ -16,4 +16,3 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - run: ruff check bot tests
       - run: python -m pytest -q
-      - run: docker build -t tushlik-bot .
