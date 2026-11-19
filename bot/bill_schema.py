@@ -22,6 +22,7 @@ class DraftItem:
     unit_price: int
     qty: int
     shared: bool
+    me: int = 0  # portions the payer ate himself (dishes only)
 
 
 @dataclass
@@ -68,8 +69,14 @@ def _items(raw, shared: bool, key: str, problems: list[str]) -> list[DraftItem]:
         if not isinstance(qty, int) or isinstance(qty, bool) or not 1 <= qty <= MAX_QTY:
             problems.append(f"{where}: qty должно быть целым от 1 до {MAX_QTY}")
             continue
+        me = r.get("me", 0) or 0
+        if shared:
+            me = 0  # shared things are split on everyone anyway
+        elif not isinstance(me, int) or isinstance(me, bool) or not 0 <= me <= qty:
+            problems.append(f"{where}: me — сколько порций ел ты сам, целое от 0 до {qty}")
+            continue
         if price is not None:
-            out.append(DraftItem(name, price, qty, shared))
+            out.append(DraftItem(name, price, qty, shared, me))
     return out
 
 

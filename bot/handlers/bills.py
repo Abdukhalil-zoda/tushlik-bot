@@ -103,7 +103,7 @@ async def post(cb: CallbackQuery, callback_data: ui.Post, ctx: Ctx):
     msg = await ctx.bot.send_message(callback_data.chat, ui.bill_text(ctx.cfg, opened, payer, items, claims, people, s),
                                      reply_markup=ui.bill_kb(opened, ctx.username), disable_web_page_preview=True)
     await ctx.repo.publish(bill["id"], callback_data.chat, msg.message_id)
-    await cb.message.edit_text("✅ Счёт отправлен в группу. Отметь и свои блюда:")
+    await cb.message.edit_text("✅ Счёт отправлен в группу. Твои блюда из JSON («me») уже отмечены — проверь или поправь:")
     await cb.answer()
     await open_picker(cb.message, ctx, bill["id"], uid=cb.from_user.id)
 
@@ -165,7 +165,7 @@ async def pick(cb: CallbackQuery, callback_data: ui.Pick, ctx: Ctx):
     await ctx.repo.set_claim(item.id, uid, n)
     if n:
         await ctx.repo.join(bid, uid)
-    elif not any(uid in c for c in (await ctx.repo.claims(bid)).values()):
+    elif uid != bill["payer_id"] and not any(uid in c for c in (await ctx.repo.claims(bid)).values()):
         await ctx.repo.leave(bid, uid)  # picked nothing any more: no share of the common things either
     await redraw_picker(cb, ctx, bid)
     await cb.answer()

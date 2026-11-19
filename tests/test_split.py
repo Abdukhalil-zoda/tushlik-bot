@@ -80,3 +80,16 @@ def test_bad_bills_explain_the_problem(raw, needle):
 def test_prices_may_be_strings_or_floats():
     d = parse(json.dumps({"items": [{"name": "Сомса", "price": "7000"}, {"name": "Чай", "price": 3000.4}]}))
     assert [i.unit_price for i in d.items] == [7000, 3000]
+
+
+def test_payer_own_portions_are_parsed():
+    d = parse(json.dumps({"items": [{"name": "Плов", "price": 45000, "qty": 3, "me": 2}, {"name": "Лагман", "price": 1}],
+                          "shared": [{"name": "Чай", "price": 9000, "me": 1}]}))
+    assert [i.me for i in d.items] == [2, 0, 0]  # "me" on a shared thing is ignored
+
+
+@pytest.mark.parametrize("me", [4, -1, 1.5, "1", True])
+def test_payer_portions_must_fit_the_dish(me):
+    with pytest.raises(BillError) as e:
+        parse(json.dumps({"items": [{"name": "Плов", "price": 45000, "qty": 3, "me": me}]}))
+    assert any("me" in p for p in e.value.problems)

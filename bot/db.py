@@ -55,9 +55,14 @@ class Repo:
             bid = await c.fetchval(
                 "INSERT INTO bills (payer_id, title, service_percent, receipt_total) VALUES ($1, $2, $3, $4) RETURNING id",
                 payer, draft.title, draft.service_percent, draft.total)
-            await c.executemany(
-                "INSERT INTO bill_items (bill_id, position, name, unit_price, qty, shared) VALUES ($1, $2, $3, $4, $5, $6)",
-                [(bid, i, it.name, it.unit_price, it.qty, it.shared) for i, it in enumerate(draft.items)])
+            for i, it in enumerate(draft.items):
+                iid = await c.fetchval(
+                    "INSERT INTO bill_items (bill_id, position, name, unit_price, qty, shared) VALUES ($1, $2, $3, $4, $5, $6) "
+                    "RETURNING id", bid, i, it.name, it.unit_price, it.qty, it.shared)
+                if it.me:
+                    await c.execute("INSERT INTO claims (item_id, user_id, units) VALUES ($1, $2, $3)", iid, payer, it.me)
+            # The payer was at the lunch too: always a participant, so he also pays his part of the shared things.
+            await c.execute("INSERT INTO participants (bill_id, user_id) VALUES ($1, $2)", bid, payer)
         return bid
 
     async def last_draft(self, uid: int) -> asyncpg.Record | None:
